@@ -53,25 +53,25 @@ for sub = 1:133
     DCEMRI = reshape(X_mapped,size(Y));
     clear X_sort Y X X_mapped
     
-%     % Get smoothened parenchyma contrast curves
-%     ROI = nii_read_volume(['C:\Users\user\Documents\Characterization\DataCharacterization\' num2str(sub) '\parenchyma.nii']);
-%     
-%     tipsROI = uint8(imdilate(ROI, ones([5,5,5])));
-%     tipsDCEMRI = permute(DCEMRI, [4,1,2,3]);
-%     
-%     sDCEMRI = permute(tipsFilter(single(tipsDCEMRI), [5,5,3] , 20, uint8(tipsROI)), [2,3,4,1]);
-%     
-%     clear tipsROI tipsDCEMRI
-%     
-%     % calculate mean parenchyma
-%     for tp = 1:size(sDCEMRI,4)
-%         parenchyma = double(sDCEMRI(:,:,:,tp)).*double(ROI);
-%         parenchyma(ROI==0)=[];
-%         TIC_p(tp) = mean(parenchyma);
-% 
-%         clear parenchyma
-%     end
-%     S_parenchyma = TIC_p;
+    % Get smoothened parenchyma contrast curves
+    ROI = nii_read_volume(['C:\Users\user\Documents\Characterization\DataCharacterization\' num2str(sub) '\parenchyma.nii']);
+    
+    tipsROI = uint8(imdilate(ROI, ones([5,5,5])));
+    tipsDCEMRI = permute(DCEMRI, [4,1,2,3]);
+     
+    sDCEMRI = permute(tipsFilter(single(tipsDCEMRI), [5,5,3] , 20, uint8(tipsROI)), [2,3,4,1]);
+     
+    clear tipsROI tipsDCEMRI
+     
+    % calculate mean parenchyma
+    for tp = 1:size(sDCEMRI,4)
+         parenchyma = double(sDCEMRI(:,:,:,tp)).*double(ROI);
+         parenchyma(ROI==0)=[];
+         TIC_p(tp) = mean(parenchyma);
+
+         clear parenchyma
+         end
+     S_parenchyma = TIC_p;
 
     
     
@@ -116,43 +116,43 @@ for sub = 1:133
       
         DCEMRI(DCEMRI<0.001)=0.001;
         
-%         % Get contrast curves
-%         SI_ratio = zeros(size(DCEMRI));
-%         Sratio_mask=[];
-%         for s = 1:size(DCEMRI,4)
-%             SI_ratio(:,:,:,s) = DCEMRI(:,:,:,s)./S_parenchyma(1,s);
-% 
-%             % Get curve only within mask
-%             K = SI_ratio(:,:,:,s).*double(Mask);
-%             K(Mask==0)=[];
-%             Sratio_mask = [Sratio_mask;K];
-% 
-%             clear K 
-%         end
+        % Get contrast curves
+        SI_ratio = zeros(size(DCEMRI));
+        Sratio_mask=[];
+        for s = 1:size(DCEMRI,4)
+            SI_ratio(:,:,:,s) = DCEMRI(:,:,:,s)./S_parenchyma(1,s);
+
+            % Get curve only within mask
+            K = SI_ratio(:,:,:,s).*double(Mask);
+            K(Mask==0)=[];
+            Sratio_mask = [Sratio_mask;K];
+
+            clear K 
+        end
 
         
         subjectLesion(j,1) = sub;
         
-%         Sratio(j,:) = mean(Sratio_mask,2);
+        Sratio(j,:) = mean(Sratio_mask,2);
         
         clear Kinetic
         
-%         MaxEnhancement = max(SI_ratio,[],4);
-%         
-%         
-%         % Gray level features on all 6 phases 
-%         F = GrayLevel(DCEMRI(:,:,:,1),Mask);
-%         t0GrayLevelHistogram(j,:) = F;
-%         F = GrayLevel(DCEMRI(:,:,:,2),Mask);
-%         t1GrayLevelHistogram(j,:) = F;
-%         F = GrayLevel(DCEMRI(:,:,:,7),Mask);
-%         t2GrayLevelHistogram(j,:) = F;
-%         F = GrayLevel(DCEMRI(:,:,:,11),Mask);
-%         t3GrayLevelHistogram(j,:) = F;
-%         F = GrayLevel(DCEMRI(:,:,:,13),Mask);
-%         t4GrayLevelHistogram(j,:) = F;
-%         F = GrayLevel(DCEMRI(:,:,:,16),Mask);
-%         t5GrayLevelHistogram(j,:) = F;
+        MaxEnhancement = max(SI_ratio,[],4);
+        
+        
+        % Gray level features on all 6 phases 
+        F = GrayLevel(DCEMRI(:,:,:,1),Mask);
+        t0GrayLevelHistogram(j,:) = F;
+        F = GrayLevel(DCEMRI(:,:,:,2),Mask);
+        t1GrayLevelHistogram(j,:) = F;
+        F = GrayLevel(DCEMRI(:,:,:,7),Mask);
+        t2GrayLevelHistogram(j,:) = F;
+        F = GrayLevel(DCEMRI(:,:,:,11),Mask);
+        t3GrayLevelHistogram(j,:) = F;
+        F = GrayLevel(DCEMRI(:,:,:,13),Mask);
+        t4GrayLevelHistogram(j,:) = F;
+        F = GrayLevel(DCEMRI(:,:,:,16),Mask);
+        t5GrayLevelHistogram(j,:) = F;
 
         Im = mean(DCEMRI(:,:,:,7:10),4); % Mean late arterial enhancement
         
@@ -163,21 +163,21 @@ for sub = 1:133
         
         % Texture feature on Late Arterial Enhancement
         Ftexture_LE(j,:) = Texture(Im,Mask,1);
-%         % Texture feature on T0
-%         Ftexture_t0(j,:) = Texture(DCEMRI,Mask,1); % Texture features
-%         
-%         % Texture feature on T1
-%         Ftexture_t1(j,:) = Texture(DCEMRI,Mask,2); % Texture features
-%         % Texture feature on T2
-%         Ftexture_t2(j,:) = Texture(DCEMRI,Mask,7); % Texture features
-%         % Texture feature on T3
-%         Ftexture_t3(j,:) = Texture(DCEMRI,Mask,11); % Texture features
-%         % Texture feature on T4
-%         Ftexture_t4(j,:) = Texture(DCEMRI,Mask,13); % Texture features
-%         % Texture feature on T5
-%         Ftexture_t5(j,:) = Texture(DCEMRI,Mask,16); % Texture features
-%         % Texture feature on Max enhancement
-%         Ftexture_MaxEnh(j,:) = Texture_3D(MaxEnhancement,Mask); % Texture features
+        % Texture feature on T0
+        Ftexture_t0(j,:) = Texture(DCEMRI,Mask,1); % Texture features
+        
+        % Texture feature on T1
+        Ftexture_t1(j,:) = Texture(DCEMRI,Mask,2); % Texture features
+        % Texture feature on T2
+        Ftexture_t2(j,:) = Texture(DCEMRI,Mask,7); % Texture features
+        % Texture feature on T3
+        Ftexture_t3(j,:) = Texture(DCEMRI,Mask,11); % Texture features
+        % Texture feature on T4
+        Ftexture_t4(j,:) = Texture(DCEMRI,Mask,13); % Texture features
+        % Texture feature on T5
+        Ftexture_t5(j,:) = Texture(DCEMRI,Mask,16); % Texture features
+        % Texture feature on Max enhancement
+        Ftexture_MaxEnh(j,:) = Texture_3D(MaxEnhancement,Mask); % Texture features
 
         % Radial gradient histogram 
         
