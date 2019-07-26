@@ -50,27 +50,11 @@ lesiontype = np.asarray(lesiontype)
 Labels = list(lesiontype)
 
 
-#sheet2 = book.sheet_by_name('BenignvsMalignant')
-#lesiontype = [sheet2.cell(row_index, 1).value for row_index in xrange(1, num_rows+1)]
-#lesiontype = np.asarray(lesiontype)
-#sub = [sheet.cell(row_index, 0).value for row_index in xrange(1, num_rows+1)]
-#sub = np.asarray(sub)
-#Labels = list(lesiontype)
-#
-#selection = SelectKBest(k=50)
-#BestFeatures = selection.fit(Features,Labels).transform(Features)
-#BestFeaturesIndices1 = selection.get_support(indices=True)
-
 clf = ExtraTreesClassifier(n_estimators=700, max_depth=None,
                            n_jobs=-1, max_features="auto",
                            min_samples_split=4, random_state=None,
                            class_weight='balanced_subsample',
                            min_samples_leaf=5)
-
-
-#scores = cross_val_score(clf, BestFeatures, Labels)
-#clf.fit(BestFeatures, Labels)
-#importances = clf.feature_importances_
 
 
 
@@ -79,9 +63,6 @@ loo = LeaveOneOut()
 looPredict = np.zeros((213, 5), dtype=np.float)
 result1 = np.zeros((213, 1))
 predictions1 = np.zeros((213, 1))
-#FreqFeatures = np.zeros((164,1))
-
-#looPredict = np.zeros((213, 2), dtype=np.float)
 
 
 
@@ -95,7 +76,6 @@ for train, test in loo.split(X):
     BestFeaturesIndices = selection.get_support(indices=True)
     FeaturesTest = selection.transform(Features[test])
 
-#    FreqFeatures[BestFeaturesIndices] += 1    
     
     x = BestFeatures
     clf.fit(x, y)
